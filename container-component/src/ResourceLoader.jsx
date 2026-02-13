@@ -1,0 +1,20 @@
+import axios from 'axios';
+import React, { useEffect, useState } from "react";
+
+export const ResourceLoader = ({ children, resourceUrl, resourceName }) => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      const response = await axios.get(resourceUrl);
+      setData(response.data);
+    })();
+  }, []);
+
+  return data && React.Children.map(children, child => {
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, { [resourceName]: data });
+    }
+    return child;
+  });
+}
